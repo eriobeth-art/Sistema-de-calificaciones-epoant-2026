@@ -1,0 +1,9 @@
+{
+  "name": "Sistema Integral de Calificaciones EPOANT",
+  "short_name": "Calificaciones EPOANT",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#071A33",
+  "theme_color": "#0F4C81",
+  "icons": []
+}

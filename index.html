@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <style>
+    :root{--green:#0F4C81;--green2:#2563EB;--gold:#38BDF8;--bg:#F4F8FC;--line:#D7E3F1;--muted:#64748B;--red:#DC3545;--amber:#F59E0B;--navy:#0B1F3A;--blue:#2563EB;--sky:#38BDF8;--blueSoft:#EAF3FF}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;color:#1f2937;background:var(--bg)}
+    button,input,select,textarea{font:inherit}
+    .loginScreen{position:fixed;inset:0;background:radial-gradient(circle at 18% 12%,rgba(125,211,252,.28),transparent 30%),radial-gradient(circle at 84% 82%,rgba(59,130,246,.24),transparent 34%),linear-gradient(145deg,#06182D 0%,#0A315D 50%,#0F4C81 100%);z-index:400;display:flex;align-items:center;justify-content:center;padding:18px}
+    .loginCard{width:min(440px,100%);background:rgba(255,255,255,.985);border-radius:26px;padding:30px;box-shadow:0 30px 90px rgba(2,20,40,.38);border:1px solid rgba(191,219,254,.92);backdrop-filter:blur(16px)}
+    .loginLogo{width:94px;height:102px;border-radius:22px;background:#FFFFFF;display:grid;place-items:center;margin:0 auto 10px;border:1px solid #D5E5F6;box-shadow:0 12px 28px rgba(15,76,129,.16);overflow:hidden}.loginLogo img{width:84px;height:92px;object-fit:contain;display:block}
+    .loginEyebrow{text-align:center;font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:900;color:#0F4C81;margin-top:8px}
+    .loginCard h2{text-align:center;color:#164A38;margin:6px 0 4px;font-size:22px;line-height:1.2}.loginCard p{text-align:center;color:var(--muted);font-size:12.5px;line-height:1.5;margin:0 0 16px}
+    .loginRole{display:flex;align-items:center;justify-content:center;gap:8px;margin:0 0 16px}.loginRole span{display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border-radius:999px;background:#EFF6FF;border:1px solid #BFDBFE;color:#1E3A8A;font-size:10px;font-weight:900}.loginRole i{width:7px;height:7px;border-radius:50%;background:#16A34A;box-shadow:0 0 0 3px rgba(22,163,74,.12)}
+    .loginField{margin-bottom:12px}.loginField label{display:block;font-size:11px;font-weight:850;margin-bottom:5px;color:#263B4D}.loginField input{width:100%;border:1px solid #CBD9E8;border-radius:12px;padding:12px 13px;outline:none;background:#F8FBFF;transition:.2s;border-color .2s,box-shadow .2s}.loginField input:focus{border-color:#3B82F6;box-shadow:0 0 0 4px rgba(59,130,246,.12);background:#FFFFFF}
+    .loginActions{display:flex;flex-direction:column;gap:9px}.loginError{display:none;background:#fff0ee;color:#9f1c13;border:1px solid #f2b8b5;border-radius:10px;padding:10px 12px;font-size:12px;margin-bottom:12px}
+    .loginHelp{margin-top:14px;padding:11px 12px;border-radius:12px;background:#F8FAFC;border:1px solid #E2E8F0;color:#64748B;font-size:10.5px;line-height:1.45;text-align:center}.loginVersion{text-align:center;margin-top:10px;font-size:9px;color:#94A3B8;font-weight:800;letter-spacing:.06em}
+    .btn{border:0;border-radius:11px;padding:10px 14px;font-weight:850;cursor:pointer;transition:transform .16s ease,box-shadow .16s ease,background .16s ease}.btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 7px 18px rgba(15,76,129,.15)}.btn:disabled{opacity:.55;cursor:not-allowed}.primary{background:linear-gradient(135deg,#0F4C81,#2563EB);color:white}.secondary{background:#EAF3FF;color:#0F4C81;border:1px solid #C9DDF5}.gold{background:linear-gradient(135deg,#0284C7,#38BDF8);color:white}.danger{background:#FDEDEA;color:#A42B20}
+    #appShell{display:none;min-height:100vh}
+    .sidebar{position:fixed;left:0;top:0;bottom:0;width:245px;background:linear-gradient(180deg,#081F3A 0%,#0B2F5B 52%,#0F4C81 100%);color:white;padding:22px 16px;overflow:auto;box-shadow:10px 0 30px rgba(8,31,58,.12)}
+    .brand{padding:8px 10px 22px;border-bottom:1px solid rgba(255,255,255,.12);margin-bottom:14px}.brandMark{width:72px;height:78px;border:1px solid rgba(191,219,254,.75);border-radius:18px;display:grid;place-items:center;margin-bottom:12px;background:#FFFFFF;box-shadow:0 10px 22px rgba(0,0,0,.14);overflow:hidden}.brandMark img{width:64px;height:70px;object-fit:contain;display:block}.brand h1{font-size:17px;margin:0}.brand p{font-size:10px;opacity:.8;line-height:1.4}
+    .nav{display:grid;gap:6px}.nav button{display:flex;gap:11px;align-items:center;width:100%;border:0;background:transparent;color:white;padding:11px 12px;border-radius:10px;text-align:left;font-weight:800;cursor:pointer;opacity:.9}.nav button.active,.nav button:hover{background:linear-gradient(90deg,rgba(56,189,248,.24),rgba(255,255,255,.10));opacity:1;box-shadow:inset 3px 0 0 #7DD3FC}
+    .main{margin-left:245px;min-height:100vh}.topbar{height:76px;background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);box-shadow:0 4px 18px rgba(15,76,129,.05)}
+    .topbar h2{font-size:20px;color:var(--green);margin:0}.topbar .sub{font-size:11px;color:var(--muted);margin-top:4px}.userBox{display:flex;align-items:center;gap:10px}.avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#0F4C81,#38BDF8);color:white;font-weight:900;box-shadow:0 5px 14px rgba(37,99,235,.22)}
+    .content{padding:24px;max-width:1550px;margin:0 auto}.page{display:none}.page.active{display:block}
+    .hero{display:flex;justify-content:space-between;gap:18px;align-items:flex-end;margin-bottom:18px}.hero h3{margin:0;color:var(--green);font-size:22px}.hero p{color:var(--muted);font-size:12px;margin:5px 0 0}
+    .filters{display:flex;gap:10px;flex-wrap:wrap}.control{background:white;border:1px solid var(--line);border-radius:10px;padding:9px 11px}.control label{display:block;font-size:9px;font-weight:800;color:var(--muted);margin-bottom:3px}.control select,.control input{border:0;outline:0;background:transparent;color:#1f2937;min-width:165px}
+    .kpis{display:grid;grid-template-columns:repeat(6,minmax(150px,1fr));gap:12px;margin:16px 0 20px}.kpi{background:linear-gradient(180deg,#FFFFFF,#F8FBFF);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 8px 24px rgba(15,76,129,.06)}.kpi .label{font-size:9px;font-weight:900;color:var(--muted);text-transform:uppercase}.kpi .num{font-size:26px;font-weight:950;margin-top:7px;color:var(--green)}.kpi .hint{font-size:10px;color:var(--muted);margin-top:5px}
+    .panel{background:white;border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 8px 24px rgba(15,76,129,.06);margin-bottom:18px}.panelHead{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}.panelHead h4{margin:0;color:var(--green)}
+    .tableWrap{overflow:auto}table{border-collapse:collapse;width:100%;font-size:11px}th{background:linear-gradient(135deg,#0F4C81,#2563EB);color:white;padding:10px;text-align:left;white-space:nowrap}td{padding:10px;border-bottom:1px solid #edf1ef;vertical-align:middle}tr:hover td{background:#f8fbf9}
+    .badge{display:inline-flex;align-items:center;padding:5px 8px;border-radius:999px;font-size:9px;font-weight:900}.bLow{background:#E7F0FF;color:#1D4ED8}.bMed{background:#FFF2D7;color:#94610B}.bHigh{background:#FCE7E4;color:#A62F23}.bNone{background:#EFF4F9;color:#667085}.bSigned{background:#E7F0FF;color:#1D4ED8}.bPending{background:#FFF2D7;color:#94610B}
+    .actions{display:flex;gap:6px;flex-wrap:wrap}.mini{padding:6px 8px;border-radius:8px;border:1px solid #cfe0d7;background:white;color:var(--green);font-size:9px;font-weight:900;cursor:pointer}.mini:hover{background:#eef6f2}
+    .grid2{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}.studentCard{padding:18px}.studentCard h3{margin:0;color:var(--green)}.studentMeta{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:14px;font-size:11px}.studentMeta div{background:#f7faf8;padding:10px;border-radius:10px}.studentMeta b{display:block;color:#667085;font-size:9px;margin-bottom:3px}
+    .gradeTable input{width:74px;padding:7px;border:1px solid #cbd5e1;border-radius:8px;text-align:center}.gradeTable td:first-child{min-width:250px}.obs{width:100%;min-height:90px;border:1px solid #cbd5e1;border-radius:10px;padding:10px;resize:vertical}
+    .alert{padding:12px 14px;border-bottom:1px solid #edf1ef;display:grid;grid-template-columns:80px 180px 1fr auto;gap:12px;align-items:center;font-size:11px}.alert:last-child{border-bottom:0}
+    .empty{padding:30px;text-align:center;color:var(--muted);font-size:12px}
+    .busy{position:fixed;inset:0;background:rgba(255,255,255,.75);z-index:350;display:none;align-items:center;justify-content:center}.busyBox{background:white;border:1px solid var(--line);border-radius:14px;padding:16px 20px;box-shadow:0 12px 35px rgba(0,0,0,.15);color:var(--green);font-weight:900}
+    .toast{position:fixed;right:20px;bottom:20px;background:#0B2545;color:white;padding:12px 15px;border-radius:10px;font-size:11px;z-index:500;display:none;max-width:360px}
+    .modal{position:fixed;inset:0;background:rgba(13,31,24,.55);z-index:300;display:none;align-items:center;justify-content:center;padding:18px}.modalCard{background:white;width:min(1000px,100%);max-height:92vh;overflow:auto;border-radius:18px;box-shadow:0 24px 70px rgba(0,0,0,.22)}.modalHead{position:sticky;top:0;background:white;border-bottom:1px solid var(--line);padding:15px 18px;display:flex;justify-content:space-between;align-items:center;z-index:3}.modalBody{padding:18px}
+
+    .modeBar{display:flex;gap:7px;background:#EDF5FF;padding:5px;border-radius:12px;border:1px solid #D7E3F1}
+    .modeBtn{border:0;background:transparent;color:#52677D;padding:9px 13px;border-radius:9px;font-size:10px;font-weight:900;cursor:pointer}
+    .modeBtn.active{background:linear-gradient(135deg,#0F4C81,#2563EB);color:#FFFFFF;box-shadow:0 5px 14px rgba(37,99,235,.20)}
+    .captureInfo{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:10px;color:#667085}
+    .subjectCapture td:nth-child(1){width:52px;text-align:center}
+    .subjectCapture td:nth-child(2){min-width:290px}
+    .subjectCapture input{width:88px;padding:8px;border:1px solid #CBD5E1;border-radius:8px;text-align:center}
+    .subjectCapture tr.hasGrade td{background:#F8FBFF}
+    .subjectCapture .gradeFail{border-color:#E9A69E;background:#FFF5F3;color:#A62F23;font-weight:900}
+    .captureTools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .classTotalBox{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;background:#F0F9FF;border:1px solid #BAE6FD;border-radius:12px;padding:10px 12px}
+    .classTotalBox label{display:block;font-size:9px;font-weight:900;color:#075985;margin-bottom:4px}
+    .classTotalBox input{width:120px;border:1px solid #7DD3FC;border-radius:8px;padding:8px;background:white}
+    .finalExtra{background:#FCE7E4;color:#A62F23}.finalOrd{background:#E7F0FF;color:#1D4ED8}.finalPend{background:#FFF2D7;color:#94610B}
+
+    @media(max-width:1150px){.kpis{grid-template-columns:repeat(3,1fr)}.grid2{grid-template-columns:1fr}}
+    @media(max-width:760px){.sidebar{position:static;width:100%;height:auto}.main{margin-left:0}.nav{grid-template-columns:repeat(2,1fr)}.topbar{position:static;padding:0 14px}.content{padding:14px}.kpis{grid-template-columns:repeat(2,1fr)}.hero{align-items:stretch;flex-direction:column}.alert{grid-template-columns:1fr}.studentMeta{grid-template-columns:1fr}}
+  
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.field textarea{width:100%;border:1px solid #CBD9E8;border-radius:12px;padding:11px 12px;outline:none;background:#F8FBFF;resize:vertical;font:inherit}
+.field textarea:focus{border-color:#3B82F6;box-shadow:0 0 0 4px rgba(59,130,246,.12);background:#fff}
+.notice{background:#EFF6FF;border:1px solid #BFDBFE;color:#1E3A8A;border-radius:12px;padding:11px 12px;font-size:11px;line-height:1.5}
+@media(max-width:850px){.grid3{grid-template-columns:1fr}}
+
+</style>
+</head>
+<body>
+<div id="loginScreen" class="loginScreen">
+  <div class="loginCard">
+    <div class="loginLogo"><img src="logo-epoant.png" alt="Logo EPOANT"></div>
+    <div class="loginEyebrow">EPOANT</div>
+    <h2>Sistema Integral de Calificaciones</h2>
+    <p>Escuela Preparatoria Oficial Anexa a la Normal de Tejupilco<br>Servicio de Orientación Educativa</p>
+    <div class="loginRole"><span><i></i> Acceso para personal autorizado</span></div>
+    <div id="loginError" class="loginError"></div>
+    <div class="loginField"><label>Usuario</label><input id="loginUsuario" autocomplete="username" placeholder="Usuario administrador"></div>
+    <div class="loginField"><label>Contraseña</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Contraseña"></div>
+    <div class="loginActions"><button id="btnLogin" class="btn primary" onclick="iniciarSesion()">Ingresar al sistema</button></div>
+    <div class="loginHelp">La base de estudiantes se sincroniza con <b>Datos de Identificación EPOANT</b>. Las credenciales se validan únicamente en el backend privado de Apps Script.</div>
+    <div class="loginVersion">CALIFICACIONES EPOANT · V3.1</div>
+  </div>
+</div>
+
+<div id="busy" class="busy"><div id="busyText" class="busyBox">Cargando…</div></div>
+<div id="toast" class="toast"></div>
+
+<div id="appShell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brandMark"><img src="logo-epoant.png" alt="Logo EPOANT"></div>
+      <h1>Orientación Educativa</h1>
+      <p>Seguimiento Académico EPOANT<br>Uso exclusivo del Orientador Educativo.</p>
+    </div>
+    <div class="nav">
+      <button class="active" data-page="inicio" onclick="ir('inicio',this)">⌂ Inicio</button>
+      <button data-page="estudiantes" onclick="ir('estudiantes',this)">◯ Estudiantes</button>
+      <button data-page="calificaciones" onclick="ir('calificaciones',this)">★ Calificaciones</button>
+      <button data-page="reportes" onclick="ir('reportes',this)">▤ Reportes</button>
+      <button data-page="firmas" onclick="ir('firmas',this)">✎ Firma de Tutor</button>
+      <button data-page="alertas" onclick="ir('alertas',this)">⚠ Alertas</button>
+      <button data-page="riesgo" onclick="ir('riesgo',this)">! Alumnos en riesgo</button>
+      <button data-page="intervenciones" onclick="ir('intervenciones',this)">✚ Intervenciones</button>
+      <button data-page="enlaces" onclick="ir('enlaces',this)">⌁ Control de enlaces</button>
+      <button data-page="seguimiento" onclick="ir('seguimiento',this)">↗ Seguimiento</button>
+      <button data-page="administracion" onclick="ir('administracion',this)">⚙ Administración</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px"><img src="logo-epoant.png" alt="EPOANT" style="width:44px;height:48px;object-fit:contain;background:#fff;border:1px solid #D7E3F1;border-radius:11px;padding:2px;box-shadow:0 4px 12px rgba(15,76,129,.10)"><div><h2>Sistema Integral de Seguimiento Académico EPOANT</h2><div id="topSub" class="sub">Gestión multigrupo</div></div></div>
+      <div class="userBox"><div class="avatar">EV</div><div><b style="font-size:11px">Eriobeth</b><div style="font-size:9px;color:#667085">Orientación Educativa</div></div><button class="mini" onclick="cerrarSesionUI()">Salir</button></div>
+    </div>
+
+    <div class="content">
+      <section id="page-inicio" class="page active">
+        <div class="hero"><div><h3>Panel general</h3><p>Monitoreo del grupo, firmas, reportes y riesgo académico. <span id="perfLoad" style="font-size:10px;color:#64748B"></span></p></div><div class="filters"><div class="control"><label>Grupo</label><select id="grupoGlobal" onchange="cambiarGrupo(this.value)"></select></div><div class="control"><label>Evaluación</label><select id="parcialGlobal" onchange="cambiarParcial(this.value)"><option value="P1">Primer Parcial</option><option value="P2">Segundo Parcial</option><option value="P3">Tercer Parcial</option></select></div></div></div>
+        <div id="kpis" class="kpis"></div>
+        <div class="grid2">
+          <div class="panel"><div class="panelHead"><h4>Estudiantes</h4><button class="mini" onclick="ir('calificaciones')">Capturar calificaciones</button></div><div class="tableWrap"><table><thead><tr><th>#</th><th>Alumno</th><th>Promedio</th><th>Reprobadas</th><th>Riesgo</th><th>Firma</th><th></th></tr></thead><tbody id="tablaInicio"></tbody></table></div></div>
+          <div class="panel"><div class="panelHead"><h4>Alertas prioritarias</h4><button class="mini" onclick="ir('alertas')">Ver todas</button></div><div id="alertasInicio"></div></div>
+        </div>
+      </section>
+
+      <section id="page-estudiantes" class="page">
+        <div class="hero"><div><h3 id="tituloEstudiantesGrupo">Estudiantes del grupo activo</h3><p>Base académica y contacto del responsable · Orden por apellido paterno.</p></div><div class="control"><label>Buscar</label><input id="buscarEst" placeholder="Nombre o CURP" oninput="renderEstudiantes()"></div></div>
+        <div class="panel"><div class="tableWrap"><table><thead><tr><th>#</th><th>Alumno</th><th>CURP</th><th>Tutor / responsable</th><th>Parentesco</th><th>Tel. tutor</th><th>Tel. estudiante</th><th>Estado</th><th></th></tr></thead><tbody id="tablaEstudiantes"></tbody></table></div></div>
+      </section>
+
+      <section id="page-calificaciones" class="page">
+        <div class="hero">
+          <div>
+            <h3>Captura de calificaciones</h3>
+            <p>Trabaja de dos maneras: por estudiante o por asignatura.</p>
+          </div>
+          <div class="filters">
+            <div class="control">
+              <label>Evaluación</label>
+              <select id="parcialCal" onchange="sincronizarParcial(this.value)">
+                <option value="P1">Primer Parcial</option>
+                <option value="P2">Segundo Parcial</option>
+                <option value="P3">Tercer Parcial</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" style="padding:14px 16px">
+          <div class="captureTools">
+            <div class="modeBar" aria-label="Modalidad de captura">
+              <button id="modeAlumno" class="modeBtn active" onclick="cambiarModalidadCaptura('ALUMNO')">Por estudiante</button>
+              <button id="modeAsignatura" class="modeBtn" onclick="cambiarModalidadCaptura('ASIGNATURA')">Por asignatura</button>
+            </div>
+
+            <div id="selectorAlumnoWrap" class="control">
+              <label>Alumno</label>
+              <select id="alumnoCal" onchange="abrirCaptura(this.value)"></select>
+            </div>
+
+            <div id="selectorAsignaturaWrap" class="control" style="display:none">
+              <label>Asignatura</label>
+              <select id="asignaturaCal" onchange="abrirCapturaAsignatura(this.value)"></select>
+            </div>
+          </div>
+        </div>
+
+        <div id="captureHost" class="panel">
+          <div class="empty">Selecciona un estudiante para comenzar.</div>
+        </div>
+      </section>
+
+      <section id="page-reportes" class="page">
+        <div class="hero"><div><h3>Reportes de evaluación</h3><p>Desde aquí puedes enviar el reporte al tutor para firma y compartir al estudiante su enlace personal por WhatsApp.</p></div></div>
+        <div class="panel"><div class="tableWrap"><table><thead><tr><th>#</th><th>Alumno</th><th>Promedio</th><th>Reporte</th><th>Tutor</th><th>Estudiante</th><th>Firma</th></tr></thead><tbody id="tablaReportes"></tbody></table></div></div>
+      </section>
+
+      <section id="page-firmas" class="page">
+        <div class="hero"><div><h3>Firma de calificaciones por parcial</h3><p>Cada firma queda vinculada a una versión exacta del reporte. Si las calificaciones cambian, el sistema solicita una nueva firma.</p></div></div>
+        <div class="panel"><div class="tableWrap"><table><thead><tr><th>#</th><th>Alumno</th><th>Tutor</th><th>Reporte / versión</th><th>Firma</th><th>Fecha</th><th>Acciones</th></tr></thead><tbody id="tablaFirmas"></tbody></table></div></div>
+      </section>
+
+      <section id="page-alertas" class="page">
+        <div class="hero"><div><h3>Centro de alertas</h3><p>Situaciones que requieren revisión, comunicación o intervención.</p></div></div>
+        <div id="listaAlertas" class="panel"></div>
+      </section>
+
+      <section id="page-riesgo" class="page">
+        <div class="hero"><div><h3>Alumnos en riesgo</h3><p>Clasificación automática basada en promedio y asignaturas reprobadas.</p></div></div>
+        <div class="panel"><div class="tableWrap"><table><thead><tr><th>#</th><th>Alumno</th><th>Promedio</th><th>Reprobadas</th><th>Tendencia</th><th>Riesgo</th><th>Firma</th><th></th></tr></thead><tbody id="tablaRiesgo"></tbody></table></div></div>
+      </section>
+
+      
+      <section id="page-intervenciones" class="page">
+        <div class="hero">
+          <div>
+            <h3>Intervenciones de Orientación Educativa</h3>
+            <p>Registra entrevistas, acuerdos, compromisos, canalizaciones y seguimiento del alumno. Este módulo es de uso interno del Orientador.</p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panelHead"><div><h4>Nueva intervención</h4><p>La información queda integrada al expediente de seguimiento.</p></div></div>
+          <div class="panelBody">
+            <div class="grid2">
+              <div class="field"><label>Estudiante</label><select id="intAlumno"></select></div>
+              <div class="field"><label>Tipo de intervención</label>
+                <select id="intTipo">
+                  <option value="">Selecciona…</option>
+                  <option>Entrevista con estudiante</option>
+                  <option>Entrevista con madre/padre/tutor</option>
+                  <option>Seguimiento académico</option>
+                  <option>Acuerdo de mejora</option>
+                  <option>Situación conductual</option>
+                  <option>Canalización</option>
+                  <option>Orientación individual</option>
+                  <option>Otro</option>
+                </select>
+              </div>
+              <div class="field"><label>Estado</label>
+                <select id="intEstado">
+                  <option>ABIERTO</option>
+                  <option>EN SEGUIMIENTO</option>
+                  <option>CONCLUIDO</option>
+                </select>
+              </div>
+              <div class="field"><label>Próxima fecha de seguimiento</label><input id="intFechaSeguimiento" type="date"></div>
+            </div>
+            <div class="field"><label>Motivo</label><textarea id="intMotivo" rows="3" placeholder="Motivo de atención o situación observada"></textarea></div>
+            <div class="grid2">
+              <div class="field"><label>Acuerdos</label><textarea id="intAcuerdos" rows="3"></textarea></div>
+              <div class="field"><label>Compromisos</label><textarea id="intCompromisos" rows="3"></textarea></div>
+            </div>
+            <div class="field"><label>Canalización / referencia</label><input id="intCanalizacion" placeholder="Opcional"></div>
+            <div class="field"><label>Observaciones internas</label><textarea id="intObservaciones" rows="3"></textarea></div>
+            <div class="actions"><button class="btn primary" onclick="guardarIntervencionUI()">Guardar intervención</button><button class="btn secondary" onclick="cargarIntervencionesUI()">Actualizar historial</button></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panelHead"><div><h4>Historial de intervenciones</h4><p>Seguimiento documental del Orientador Educativo.</p></div></div>
+          <div class="tableWrap">
+            <table>
+              <thead><tr><th>Fecha</th><th>Alumno</th><th>Tipo</th><th>Motivo</th><th>Estado</th><th>Seguimiento</th><th>Acción</th></tr></thead>
+              <tbody id="tablaIntervenciones"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="page-enlaces" class="page">
+        <div class="hero">
+          <div>
+            <h3>Control de enlaces</h3>
+            <p>Administra los accesos públicos enviados a estudiantes y las solicitudes de firma pendientes del tutor.</p>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panelHead"><div><h4>Accesos del parcial actual</h4><p>Puedes revocar enlaces enviados por error sin eliminar el historial.</p></div><button class="btn secondary" onclick="cargarControlEnlaces()">Actualizar</button></div>
+          <div class="tableWrap">
+            <table>
+              <thead><tr><th>#</th><th>Alumno</th><th>Portal estudiante</th><th>Consultas</th><th>Firma tutor</th><th>Acciones</th></tr></thead>
+              <tbody id="tablaEnlaces"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="page-administracion" class="page">
+        <div class="hero">
+          <div>
+            <h3>Administración del Orientador</h3>
+            <p>Parámetros institucionales que se reflejan en reportes, portales y seguimientos. Incluye la sincronización segura de estudiantes desde Datos de Identificación.</p>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panelHead"><div><h4>Configuración de trabajo</h4><p>Actualiza estos datos al iniciar un nuevo ciclo o cuando cambien los criterios.</p></div></div>
+          <div class="panelBody">
+            <div class="grid2">
+              <div class="field"><label>Institución</label><input id="cfgInstitucion"></div>
+              <div class="field"><label>Plantel</label><input id="cfgPlantel"></div>
+              <div class="field"><label>Turno</label><input id="cfgTurno"></div>
+              <div class="field"><label>Orientador responsable</label><input id="cfgResponsable"></div>
+              <div class="field"><label>Ciclo escolar</label><input id="cfgCiclo"></div>
+              <div class="field"><label>Semestre</label><input id="cfgSemestre"></div>
+              <div class="field"><label>Grado</label><input id="cfgGrado"></div>
+              <div class="field"><label>Grupo</label><input id="cfgGrupo"></div>
+              <div class="field"><label>Grupo en romano</label><input id="cfgGrupoRomano"></div>
+            </div>
+            <h4 style="margin:18px 0 10px">Criterios de condición final</h4>
+            <div class="grid3">
+              <div class="field"><label>Puntos mínimos</label><input id="cfgPuntos" type="number" min="1"></div>
+              <div class="field"><label>Reprobatorias para extraordinario</label><input id="cfgReprobatorias" type="number" min="1"></div>
+              <div class="field"><label>% inasistencias para extraordinario</label><input id="cfgInasistencias" type="number" min="0" max="100"></div>
+            </div>
+            <div class="notice" style="margin-top:12px">Esta sección configura documentos y reglas del sistema. Cambiar grado o grupo no sustituye ni reorganiza la base de estudiantes existente.</div>
+            <div class="actions" style="margin-top:14px"><button class="btn primary" onclick="guardarConfiguracionUI()">Guardar configuración</button></div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:16px">
+          <div class="panelHead">
+            <div>
+              <h4>Sincronización de estudiantes</h4>
+              <p>Actualiza la base del sistema desde Datos de Identificación sin duplicar alumnos ni alterar su historial académico.</p>
+            </div>
+            <button class="btn primary" onclick="sincronizarEstudiantesUI()">Sincronizar estudiantes</button>
+          </div>
+          <div class="panelBody">
+            <div class="notice">
+              Automática: el sistema consulta la fuente maestra como máximo una vez cada 10 minutos. Sólo los registros con <b>ESTATUS = ACTIVO</b> se incorporan o permanecen activos. PENDIENTE y REVISAR no se habilitan.
+            </div>
+            <div id="syncEstudiantesEstado" style="margin-top:12px">
+              <div class="empty">La sincronización manual permite aplicar inmediatamente cualquier alta o cambio realizado en Datos de Identificación.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:16px">
+          <div class="panelHead">
+            <div>
+              <h4>Integridad de vínculos</h4>
+              <p>Comprueba que cada reporte, firma y seguimiento corresponda al ID y nombre del estudiante correcto.</p>
+            </div>
+            <button class="btn secondary" onclick="auditarVinculosUI()">Verificar vínculos</button>
+          </div>
+          <div class="panelBody">
+            <div class="notice">
+              V3.0 valida por ID_ESTUDIANTE y, para firmas, también por folio, FILE_ID, versión y huella del reporte. Las firmas antiguas sin vínculo exacto ya no se presentan como firma del reporte vigente.
+            </div>
+            <div id="auditVinculos" style="margin-top:12px"><div class="empty">Ejecuta la verificación cuando quieras revisar la integridad del sistema.</div></div>
+          </div>
+        </div>
+      </section>
+
+<section id="page-seguimiento" class="page">
+        <div class="hero"><div><h3>Seguimiento académico</h3><p>Genera un informe con un solo concentrado, condición final por los tres criterios, y por cada parcial firma digital, reporte, riesgo y observaciones.</p></div></div>
+        <div class="panel"><div class="tableWrap"><table><thead><tr><th>#</th><th>Alumno</th><th>Riesgo actual</th><th>Firma actual</th><th>Acción</th></tr></thead><tbody id="tablaSeguimiento"></tbody></table></div></div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<div id="modal" class="modal"><div class="modalCard"><div class="modalHead"><b id="modalTitle">Detalle</b><button class="mini" onclick="cerrarModal()">Cerrar</button></div><div id="modalBody" class="modalBody"></div></div></div>
+
+<script src="config.js"></script>
+<script src="bridge-client.js"></script>
+<script>
+let authToken=sessionStorage.getItem('epoant_calificaciones_auth')||'';
+let app={parcial:'P1',grupoClave:'',data:null,detalle:null,modalidadCaptura:'ALUMNO',capturaAsignatura:null};
+
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('loginPassword').addEventListener('keydown',e=>{if(e.key==='Enter')iniciarSesion()});
+  if(!authToken){mostrarLogin();return}
+  google.script.run.withSuccessHandler(r=>{if(r&&r.ok){ocultarLogin();cargarInicio()}else{limpiarSesion();mostrarLogin()}})
+    .withFailureHandler(()=>{limpiarSesion();mostrarLogin()}).validarSesion(authToken);
+});
+
+function iniciarSesion(){
+  const u=document.getElementById('loginUsuario').value.trim(),p=document.getElementById('loginPassword').value;
+  const b=document.getElementById('btnLogin'),e=document.getElementById('loginError');e.style.display='none';b.disabled=true;b.textContent='Verificando…';
+  google.script.run.withSuccessHandler(r=>{b.disabled=false;b.textContent='Ingresar al sistema';if(!r||!r.ok){loginError('No fue posible iniciar sesión.');return}authToken=r.token;sessionStorage.setItem('epoant_calificaciones_auth',authToken);document.getElementById('loginPassword').value='';ocultarLogin();cargarInicio()})
+  .withFailureHandler(err=>{b.disabled=false;b.textContent='Ingresar al sistema';loginError(errorText(err))}).autenticar(u,p);
+}
+function mostrarLogin(){document.getElementById('loginScreen').style.display='flex';document.getElementById('appShell').style.display='none'}
+function ocultarLogin(){document.getElementById('loginScreen').style.display='none';document.getElementById('appShell').style.display='block'}
+function loginError(m){const e=document.getElementById('loginError');e.textContent=m;e.style.display='block'}
+function limpiarSesion(){authToken='';sessionStorage.removeItem('epoant_calificaciones_auth')}
+function cerrarSesionUI(){const t=authToken;limpiarSesion();mostrarLogin();if(t)google.script.run.cerrarSesion(t)}
+
+function cargarInicio(){
+  busy(true,'Cargando grupo y base académica…');
+
+  google.script.run
+    .withSuccessHandler(r=>{
+      busy(false);
+      app.data=r;
+      app.parcial=r.config.parcial;
+      app.grupoClave=r.grupoClave||app.grupoClave||'';
+      aplicarInicio();
+    })
+    .withFailureHandler(fail)
+    .obtenerInicio(
+      authToken,
+      app.parcial,
+      app.grupoClave
+    );
+}
+
+function cambiarGrupo(clave){
+  app.grupoClave=clave||'';
+  app.detalle=null;
+  app.capturaAsignatura=null;
+  cargarInicio();
+}
+
+function cambiarParcial(p){app.parcial=p;document.getElementById('parcialCal').value=p;cargarInicio()}
+function sincronizarParcial(p){
+  app.parcial=p;
+  document.getElementById('parcialGlobal').value=p;
+  cargarInicio();
+  if(app.modalidadCaptura==='ALUMNO'){
+    const id=document.getElementById('alumnoCal').value;
+    if(id)verCaptura(id);
+  }else{
+    const id=document.getElementById('asignaturaCal').value;
+    if(id)verCapturaAsignatura(id);
+  }
+}
+
+function aplicarInicio(){
+  const d=app.data;
+
+  document.getElementById('parcialGlobal').value=app.parcial;
+  document.getElementById('parcialCal').value=app.parcial;
+
+  const gs=document.getElementById('grupoGlobal');
+
+  if(gs){
+    gs.innerHTML=(d.grupos||[])
+      .map(g=>`<option value="${escAttr(g.clave)}">${esc(g.label)} · ${g.total} alumnos</option>`)
+      .join('');
+
+    gs.value=d.grupoClave||app.grupoClave||'';
+  }
+
+  const tituloEst=document.getElementById('tituloEstudiantesGrupo');
+
+  if(tituloEst){
+    tituloEst.textContent=
+      `Estudiantes de ${d.config.grado}° ${d.config.grupoRomano}`;
+  }
+
+  const perf=document.getElementById('perfLoad');
+
+  if(perf&&d.rendimientoMs!=null){
+    perf.textContent=
+      `· carga servidor ${(Number(d.rendimientoMs)/1000).toFixed(2)} s`;
+  }
+
+  document.getElementById('topSub').textContent=
+    `${d.config.grado}° Grado · Grupo ${d.config.grupoRomano} · ${d.config.parcialNombre} · Ciclo ${d.config.ciclo}`;
+
+  const k=[
+    ['Estudiantes',d.dashboard.total,'Grupo activo'],
+    ['Con captura',d.dashboard.conCaptura,'Parcial actual'],
+    ['Reportes',d.dashboard.reportes,'PDF generados'],
+    ['Firmas',d.dashboard.firmados,'Recibidas'],
+    ['En riesgo',d.dashboard.riesgo,'Medio + alto'],
+    ['Alertas',d.dashboard.alertas,'Requieren revisión']
+  ];
+
+  document.getElementById('kpis').innerHTML=
+    k.map(x=>`<div class="kpi"><div class="label">${esc(x[0])}</div><div class="num">${x[1]}</div><div class="hint">${esc(x[2])}</div></div>`).join('');
+
+  renderInicio();
+  renderEstudiantes();
+  renderSelectAlumnos();
+  renderSelectAsignaturas();
+  renderReportes();
+  renderFirmas();
+  renderAlertas();
+  renderRiesgo();
+  renderSeguimiento();
+}
+
+function renderInicio(){
+  const arr=app.data.alumnos.slice(0,12);
+  document.getElementById('tablaInicio').innerHTML=arr.map(a=>`<tr><td>${a.n||''}</td><td><b>${esc(a.nombre)}</b></td><td>${fmtProm(a.promedio)}</td><td>${a.reprobadas}</td><td>${badgeRiesgo(a.riesgo)}</td><td>${badgeFirma(a.firma)}</td><td><button class="mini" onclick="verAlumno('${js(a.id)}')">Ver</button></td></tr>`).join('');
+  const al=app.data.alertas.slice(0,6);
+  document.getElementById('alertasInicio').innerHTML=al.length?al.map(x=>`<div class="alert"><div>${badgeNivel(x.nivel)}</div><b>${esc(x.alumno)}</b><div>${esc(x.mensaje)}</div><button class="mini" onclick="verAlumno('${js(x.alumnoId)}')">Abrir</button></div>`).join(''):'<div class="empty">Sin alertas en este momento.</div>';
+}
+
+function renderEstudiantes(){
+  if(!app.data)return;
+
+  const q=(document.getElementById('buscarEst').value||'').toLowerCase();
+
+  const arr=app.data.alumnos.filter(a=>
+    (
+      a.nombre+' '+
+      a.curp+' '+
+      (a.telefonoEstudiante||'')
+    ).toLowerCase().includes(q)
+  );
+
+  document.getElementById('tablaEstudiantes').innerHTML=
+    arr.map(a=>`<tr>
+      <td>${a.n||''}</td>
+      <td><b>${esc(a.nombre)}</b></td>
+      <td>${esc(a.curp)}</td>
+      <td>${esc(a.tutor)}</td>
+      <td>${esc(a.parentesco)}</td>
+      <td>${esc(a.telefono)}</td>
+      <td>
+        ${
+          a.telefonoEstudianteValido
+            ? esc(a.telefonoEstudiante)
+            : `<button class="mini" onclick="registrarTelefonoEstudiante('${js(a.id)}','${js(a.nombre)}')">Registrar</button>`
+        }
+      </td>
+      <td>
+        ${
+          a.telefonoValido
+            ? '<span class="badge bLow">Tutor válido</span>'
+            : '<span class="badge bHigh">Validar tutor</span>'
+        }
+      </td>
+      <td><button class="mini" onclick="verAlumno('${js(a.id)}')">Expediente</button></td>
+    </tr>`).join('');
+}
+
+function renderSelectAlumnos(){
+  const s=document.getElementById('alumnoCal');const v=s.value;s.innerHTML='<option value="">Selecciona un alumno…</option>'+app.data.alumnos.map(a=>`<option value="${escAttr(a.id)}">${a.n}. ${esc(a.nombre)}</option>`).join('');if(v)s.value=v;
+}
+
+function renderSelectAsignaturas(){
+  const s=document.getElementById('asignaturaCal');
+  if(!s||!app.data)return;
+  const v=s.value;
+  const materias=Array.isArray(app.data.asignaturas)?app.data.asignaturas:[];
+  s.innerHTML='<option value="">Selecciona una asignatura…</option>'+
+    materias.map(m=>`<option value="${escAttr(m.id)}">${esc(m.nombre)}</option>`).join('');
+  if(v)s.value=v;
+}
+
+function cambiarModalidadCaptura(modo){
+  app.modalidadCaptura=modo==='ASIGNATURA'?'ASIGNATURA':'ALUMNO';
+  const porAlumno=app.modalidadCaptura==='ALUMNO';
+
+  document.getElementById('modeAlumno').classList.toggle('active',porAlumno);
+  document.getElementById('modeAsignatura').classList.toggle('active',!porAlumno);
+  document.getElementById('selectorAlumnoWrap').style.display=porAlumno?'block':'none';
+  document.getElementById('selectorAsignaturaWrap').style.display=porAlumno?'none':'block';
+
+  if(porAlumno){
+    const id=document.getElementById('alumnoCal').value;
+    document.getElementById('captureHost').innerHTML=id
+      ? '<div class="empty">Cargando estudiante…</div>'
+      : '<div class="empty">Selecciona un estudiante para comenzar.</div>';
+    if(id)verCaptura(id);
+  }else{
+    const id=document.getElementById('asignaturaCal').value;
+    document.getElementById('captureHost').innerHTML=id
+      ? '<div class="empty">Cargando asignatura…</div>'
+      : '<div class="empty">Selecciona una asignatura para capturar al grupo completo.</div>';
+    if(id)verCapturaAsignatura(id);
+  }
+}
+
+function abrirCapturaAsignatura(id){
+  if(!id){
+    document.getElementById('captureHost').innerHTML=
+      '<div class="empty">Selecciona una asignatura para capturar al grupo completo.</div>';
+    return;
+  }
+  verCapturaAsignatura(id);
+}
+
+function verCapturaAsignatura(id){
+  busy(true,'Cargando grupo por asignatura…');
+  google.script.run
+    .withSuccessHandler(r=>{
+      busy(false);
+      app.capturaAsignatura=r;
+      renderCapturaAsignatura(r);
+    })
+    .withFailureHandler(fail)
+    .obtenerCapturaAsignatura(authToken,id,app.parcial,app.grupoClave);
+}
+
+function renderCapturaAsignatura(r){
+  const m=r.asignatura;
+  const capturados=r.alumnos.filter(a=>a.calificacion!==''&&a.calificacion!==null).length;
+
+  document.getElementById('captureHost').innerHTML=`
+    <div class="panelHead">
+      <div>
+        <h4>${esc(m.nombre)}</h4>
+        <div class="captureInfo">
+          <span>${esc(m.campo)}</span>
+          <span>·</span>
+          <span>${esc(r.parcialNombre)}</span>
+          <span>·</span>
+          <span>${capturados} de ${r.alumnos.length} con calificación</span>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="mini" onclick="ponerCeroFaltas()">Completar faltas vacías con 0</button>
+        <button class="btn primary" onclick="guardarCapturaAsignatura('${js(m.id)}')">Guardar grupo</button>
+      </div>
+    </div>
+
+    <div style="padding:12px 16px;border-bottom:1px solid #edf1ef">
+      <div class="classTotalBox">
+        <div>
+          <label>Total de clases impartidas en el curso</label>
+          <input id="totalClasesCurso" type="number" min="1" max="1000" step="1" value="${m.totalClases===''?'':m.totalClases}" placeholder="Ej. 45">
+        </div>
+        <button class="btn gold" onclick="guardarTotalClases('${js(m.id)}')">Guardar total de clases</button>
+        <div style="font-size:10px;color:#075985;max-width:520px;line-height:1.45">
+          Captúralo al finalizar el curso. El sistema sumará las faltas de P1 + P2 + P3 y enviará a extraordinario cuando las inasistencias sean <b>20% o más</b> del total de clases impartidas.
+        </div>
+      </div>
+    </div>
+
+    <div class="tableWrap">
+      <table class="subjectCapture">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Alumno</th>
+            <th>Faltas ${esc(r.parcialNombre)}</th>
+            <th>Calificación</th>
+            <th>Faltas acum.</th>
+            <th>% inasist.</th>
+            <th>Condición final</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${r.alumnos.map(a=>{
+            const has=a.calificacion!==''&&a.calificacion!==null;
+            const failGrade=has&&Number(a.calificacion)<6;
+            const cf=a.condicionFinal||'PENDIENTE';
+            const cls=cf==='EXTRAORDINARIO'?'finalExtra':cf==='ORDINARIO'?'finalOrd':'finalPend';
+            const motivos=Array.isArray(a.razonesFinales)&&a.razonesFinales.length?`<div style="font-size:8px;margin-top:3px">${esc(a.razonesFinales.join(' · '))}</div>`:'';
+            return `<tr class="${has?'hasGrade':''}">
+              <td>${a.n||''}</td>
+              <td><b>${esc(a.nombre)}</b><div style="font-size:9px;color:#98A2B3">${esc(a.curp||'')}</div></td>
+              <td><input class="sg-f" data-id="${escAttr(a.id)}" type="number" min="0" step="1" value="${a.faltas===''?'':a.faltas}"></td>
+              <td><input class="sg-c ${failGrade?'gradeFail':''}" data-id="${escAttr(a.id)}" type="number" min="0" max="10" step=".1" value="${a.calificacion===''?'':a.calificacion}" oninput="marcarNotaAsignatura(this)"></td>
+              <td>${a.faltasAcumuladas??0}</td>
+              <td>${a.porcentajeInasistencia==null?'—':Number(a.porcentajeInasistencia).toFixed(1)+'%'}</td>
+              <td><span class="badge ${cls}">${esc(cf)}</span>${motivos}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <div style="padding:14px 16px;border-top:1px solid #edf1ef">
+      <div class="captureInfo">
+        <b>Criterios finales:</b>
+        <span>2 o más parciales reprobados → extraordinario · suma menor de 18 puntos → extraordinario · inasistencias ≥20% → extraordinario.</span>
+      </div>
+    </div>`;
+}
+
+function ponerCeroFaltas(){
+  document.querySelectorAll('.sg-f').forEach(x=>{
+    if(String(x.value||'').trim()==='')x.value='0';
+  });
+}
+
+function guardarTotalClases(asignaturaId){
+  const input=document.getElementById('totalClasesCurso');
+  const total=Number(input?input.value:'');
+  if(!Number.isInteger(total)||total<=0){toast('Captura un total de clases válido.');return}
+
+  busy(true,'Guardando total de clases impartidas…');
+  google.script.run
+    .withSuccessHandler(r=>{
+      busy(false);
+      toast(r.mensaje);
+      cargarInicio();
+      verCapturaAsignatura(asignaturaId);
+    })
+    .withFailureHandler(fail)
+    .guardarTotalClasesAsignatura(authToken,asignaturaId,total);
+}
+
+function marcarNotaAsignatura(input){
+  const v=String(input.value||'').trim();
+  input.classList.toggle('gradeFail',v!==''&&!isNaN(Number(v))&&Number(v)<6);
+}
+
+function guardarCapturaAsignatura(asignaturaId){
+  const faltas={},cals={};
+  document.querySelectorAll('.sg-f').forEach(x=>faltas[x.dataset.id]=x.value);
+  document.querySelectorAll('.sg-c').forEach(x=>cals[x.dataset.id]=x.value);
+
+  const ids=[...new Set([...Object.keys(faltas),...Object.keys(cals)])];
+  const items=ids.map(id=>({
+    alumnoId:id,
+    faltas:faltas[id]??'',
+    calificacion:cals[id]??''
+  }));
+
+  const payload={
+    asignaturaId:asignaturaId,
+    parcial:app.parcial,
+    items:items
+  };
+
+  busy(true,'Guardando calificaciones del grupo…');
+  google.script.run
+    .withSuccessHandler(r=>{
+      busy(false);
+      toast(r.mensaje);
+      cargarInicio();
+      verCapturaAsignatura(asignaturaId);
+    })
+    .withFailureHandler(fail)
+    .guardarCalificacionesAsignatura(authToken,payload);
+}
+
+function renderReportes(){
+  document.getElementById('tablaReportes').innerHTML=
+    app.data.alumnos.map(a=>{
+      const firmado=a.firma&&a.firma.reporteFirmadoUrl;
+
+      const link=firmado
+        ? `<a href="${escAttr(a.firma.reporteFirmadoUrl)}" target="_blank"><b>Abrir PDF firmado</b></a>`
+        : (
+            a.reporte
+              ? `<a href="${escAttr(a.reporte.url)}" target="_blank">Abrir PDF</a>`
+              : '<span class="badge bNone">No generado</span>'
+          );
+
+      const telEst=a.telefonoEstudiante||'';
+      const telOk=!!a.telefonoEstudianteValido;
+
+      return `<tr>
+        <td>${a.n}</td>
+        <td><b>${esc(a.nombre)}</b></td>
+        <td>${fmtProm(a.promedio)}</td>
+        <td>${link}</td>
+        <td>
+          <button class="mini" onclick="whatsapp('${js(a.id)}')">WhatsApp tutor</button>
+        </td>
+        <td>
+          <div class="actions">
+            <button class="mini" onclick="enlaceEstudiante('${js(a.id)}')">Enlace</button>
+            <button class="mini" onclick="whatsappEstudianteSeguro('${js(a.id)}','${js(a.nombre)}')">WhatsApp estudiante</button>
+          </div>
+          <div style="font-size:9px;color:${telOk?'#64748B':'#A16207'};margin-top:5px">
+            ${telOk?`Tel. ${esc(telEst)}`:'Al primer envío pedirá teléfono'}
+          </div>
+        </td>
+        <td>${badgeFirma(a.firma)}</td>
+      </tr>`;
+    }).join('');
+}
+
+function renderFirmas(){
+  document.getElementById('tablaFirmas').innerHTML=app.data.alumnos.map(a=>{
+    const rep=a.reporte;
+    const f=a.firma||{estado:'PENDIENTE'};
+    const pdfFirmado=f.reporteFirmadoUrl||'';
+    const accion=f.estado==='FIRMADO'
+      ? `<button class="mini" onclick="solicitarFirma('${js(a.id)}')">Ver evidencia</button>`
+      : `<button class="mini" onclick="solicitarFirma('${js(a.id)}')">Solicitar firma</button>`;
+    const reporteHtml=pdfFirmado
+      ? `<a href="${escAttr(pdfFirmado)}" target="_blank"><b>PDF firmado</b></a>${f.version?`<div style="font-size:9px;color:#64748B">Versión V${esc(f.version)} · incluye firma digital</div>`:''}`
+      : (rep
+        ? `<a href="${escAttr(rep.url)}" target="_blank">${esc(rep.folio)}</a>${f.version?`<div style="font-size:9px;color:#64748B">Versión V${esc(f.version)}</div>`:''}`
+        : '<span class="badge bNone">No generado</span>');
+    return `<tr><td>${a.n}</td><td><b>${esc(a.nombre)}</b></td><td>${esc(a.tutor)}</td><td>${reporteHtml}</td><td>${badgeFirma(f)}</td><td>${esc(f.fecha||'—')}</td><td><div class="actions">${accion}<button class="mini" onclick="whatsapp('${js(a.id)}')">WhatsApp</button></div></td></tr>`;
+  }).join('');
+}
+function renderAlertas(){
+  const a=app.data.alertas;document.getElementById('listaAlertas').innerHTML=a.length?a.map(x=>`<div class="alert"><div>${badgeNivel(x.nivel)}</div><b>${esc(x.alumno)}</b><div><b>${esc(x.tipo)}</b><br>${esc(x.mensaje)}</div><button class="mini" onclick="verAlumno('${js(x.alumnoId)}')">Atender</button></div>`).join(''):'<div class="empty">No hay alertas activas.</div>';
+}
+function renderRiesgo(){
+  const arr=app.data.alumnos.filter(a=>a.riesgo==='ALTO'||a.riesgo==='MEDIO');
+  document.getElementById('tablaRiesgo').innerHTML=arr.length?arr.map(a=>`<tr><td>${a.n}</td><td><b>${esc(a.nombre)}</b></td><td>${fmtProm(a.promedio)}</td><td>${a.reprobadas}</td><td>${a.tendencia||'—'}</td><td>${badgeRiesgo(a.riesgo)}</td><td>${badgeFirma(a.firma)}</td><td><button class="mini" onclick="verAlumno('${js(a.id)}')">Seguimiento</button></td></tr>`).join(''):'<tr><td colspan="8"><div class="empty">No hay alumnos clasificados en riesgo en este parcial.</div></td></tr>';
+}
+function renderSeguimiento(){
+  document.getElementById('tablaSeguimiento').innerHTML=app.data.alumnos.map(a=>`<tr><td>${a.n}</td><td><b>${esc(a.nombre)}</b></td><td>${badgeRiesgo(a.riesgo)}</td><td>${badgeFirma(a.firma)}</td><td><button class="mini" onclick="generarSeguimiento('${js(a.id)}')">Generar seguimiento PDF · 2 cm</button></td></tr>`).join('');
+}
+
+function abrirCaptura(id){if(!id){document.getElementById('captureHost').innerHTML='<div class="empty">Selecciona un estudiante para comenzar.</div>';return}verCaptura(id)}
+function verCaptura(id){
+  busy(true,'Cargando expediente…');google.script.run.withSuccessHandler(r=>{busy(false);app.detalle=r;renderCaptura(r)}).withFailureHandler(fail).obtenerDetalleAlumno(authToken,id);
+}
+function renderCaptura(r){
+  const p=app.parcial.toLowerCase();const a=r.alumno;
+  document.getElementById('captureHost').innerHTML=`<div class="panelHead"><div><h4>${esc(a.nombre)}</h4><div style="font-size:10px;color:#667085">${esc(a.tutor)} · ${esc(a.telefono)}</div></div><div>${badgeRiesgo(r.resumen[app.parcial].riesgo)}</div></div><div class="tableWrap"><table class="gradeTable"><thead><tr><th>Asignatura</th><th>Faltas</th><th>Calificación</th></tr></thead><tbody>${r.asignaturas.map(m=>`<tr><td><b>${esc(m.nombre)}</b><div style="font-size:9px;color:#667085">${esc(m.campo)}</div></td><td><input class="g-f" data-id="${escAttr(m.id)}" type="number" min="0" step="1" value="${m[p].faltas===''?'':m[p].faltas}"></td><td><input class="g-c" data-id="${escAttr(m.id)}" type="number" min="0" max="10" step=".1" value="${m[p].calificacion===''?'':m[p].calificacion}"></td></tr>`).join('')}</tbody></table></div><div style="padding:16px"><label style="font-size:10px;font-weight:900">Observaciones del parcial</label><textarea id="obsCaptura" class="obs" placeholder="Acuerdos, observaciones, situación académica o intervención realizada…"></textarea><div class="actions" style="margin-top:12px"><button class="btn primary" onclick="guardarCaptura('${js(a.id)}')">Guardar calificaciones</button><button class="btn secondary" onclick="generarReporte('${js(a.id)}')">Generar reporte PDF</button><button class="btn gold" onclick="whatsapp('${js(a.id)}')">Enviar por WhatsApp</button></div></div>`;
+}
+function guardarCaptura(id){
+  const faltas={},cals={};document.querySelectorAll('.g-f').forEach(x=>faltas[x.dataset.id]=x.value);document.querySelectorAll('.g-c').forEach(x=>cals[x.dataset.id]=x.value);
+  const ids=[...new Set([...Object.keys(faltas),...Object.keys(cals)])];const items=ids.map(i=>({asignaturaId:i,faltas:faltas[i]||'',calificacion:cals[i]||''}));
+  const payload={alumnoId:id,parcial:app.parcial,items,observacion:document.getElementById('obsCaptura').value};
+  busy(true,'Guardando calificaciones…');google.script.run.withSuccessHandler(r=>{toast(r.mensaje);cargarInicio();verCaptura(id)}).withFailureHandler(fail).guardarCalificaciones(authToken,payload);
+}
+
+function verAlumno(id){
+  busy(true,'Cargando expediente…');
+
+  google.script.run
+    .withSuccessHandler(r=>{
+      busy(false);
+      app.detalle=r;
+
+      const a=r.alumno;
+      const grupo=`${esc(a.grado||'')}° ${esc((app.data&&app.data.grupos||[]).find(g=>String(g.grupo)===String(a.grupo)&&String(g.grado)===String(a.grado))?.romano||a.grupo||'')}`;
+
+      document.getElementById('modalTitle').textContent=
+        'Expediente · '+a.nombre;
+
+      document.getElementById('modalBody').innerHTML=`
+        <div class="grid2">
+          <div class="studentCard">
+            <h3>${esc(a.nombre)}</h3>
+            <div class="studentMeta">
+              <div><b>CURP / ID</b>${esc(a.curp)}</div>
+              <div><b>Núm. lista</b>${esc(a.n||'—')}</div>
+              <div><b>Grupo</b>${grupo}</div>
+              <div><b>Tutor / responsable</b>${esc(a.tutor||'—')}</div>
+              <div><b>Parentesco</b>${esc(a.parentesco||'—')}</div>
+              <div><b>Teléfono tutor</b>${esc(a.telefono||'—')}</div>
+              <div><b>Teléfono estudiante</b>${esc(a.telefonoEstudiante||'Sin registrar')}</div>
+            </div>
+            <div class="actions" style="margin-top:12px">
+              <button class="mini" onclick="editarDatosEstudiante('${js(a.id)}')">Editar datos</button>
+            </div>
+          </div>
+
+          <div class="studentCard">
+            <h3>Trayectoria</h3>
+            <div class="studentMeta">
+              ${['P1','P2','P3'].map(p=>`
+                <div>
+                  <b>${nombreP(p)}</b>
+                  ${fmtProm(r.resumen[p].promedio)} · ${r.resumen[p].reprobadas} reprobada(s)<br>
+                  ${badgeRiesgo(r.resumen[p].riesgo)}
+                </div>`).join('')}
+            </div>
+          </div>
+        </div>
+
+        <div class="actions" style="margin-top:16px">
+          <button class="btn primary" onclick="cerrarModal();ir('calificaciones');document.getElementById('alumnoCal').value='${escAttr(a.id)}';verCaptura('${js(a.id)}')">Capturar</button>
+          <button class="btn secondary" onclick="generarReporte('${js(a.id)}')">Reporte PDF</button>
+          <button class="btn gold" onclick="whatsapp('${js(a.id)}')">WhatsApp tutor</button>
+          <button class="btn secondary" onclick="enlaceEstudiante('${js(a.id)}')">Enlace estudiante</button>
+          <button class="btn gold" onclick="whatsappEstudianteSeguro('${js(a.id)}','${js(a.nombre)}')">WhatsApp estudiante</button>
+          <button class="btn secondary" onclick="generarSeguimiento('${js(a.id)}')">Seguimiento</button>
+        </div>`;
+
+      document.getElementById('modal').style.display='flex';
+    })
+    .withFailureHandler(fail)
+    .obtenerDetalleAlumno(authToken,id);
+}
+
+function cerrarModal(){document.getElementById('modal').style.display='none'}
+
+function generarReporte(id){busy(true,'Generando reporte PDF…');google.script.run.withSuccessHandler(r=>{busy(false);toast('Reporte generado');window.open(r.url,'_blank');cargarInicio()}).withFailureHandler(fail).generarReporteEvaluacion(authToken,id,app.parcial)}
+function whatsapp(id){busy(true,'Preparando reporte, firma y WhatsApp…');google.script.run.withSuccessHandler(r=>{busy(false);window.open(r.url,'_blank');cargarInicio()}).withFailureHandler(fail).prepararWhatsApp(authToken,id,app.parcial)}
+function enlaceEstudiante(id){
+  busy(true,'Preparando enlace personal del estudiante…');
+
+  google.script.run
+    .withSuccessHandler(r=>{
+      busy(false);
+
+      const texto=r.mensaje||r.url||'';
+
+      if(navigator.clipboard&&texto){
+        navigator.clipboard
+          .writeText(texto)
+          .catch(()=>{});
+      }
+
+      if(r.url){
+        window.open(r.url,'_blank');
+      }
+
+      toast(
+        'Enlace preparado. El mensaje quedó copiado y listo para compartir.'
+      );
+    })
+    .withFailureHandler(fail)
+    .crearEnlaceEstudiante(
+      authToken,
+      id,
+      app.parcial
+    );
+}
+
+
+function editarDatosEstudiante(id){
+  const r=app.detalle;
+  if(!r||!r.alumno||String(r.alumno.id)!==String(id)){
+    verAlumno(id);
+    return;
+  }
+
+  const a=r.alumno;
+
+  document.getElementById('modalTitle').textContent=
+    'Editar expediente · '+a.nombre;
+
+  document.getElementById('modalBody').innerHTML=`
+    <div class="notice">
+      Puedes actualizar manualmente los datos operativos del expediente.
+      El CURP/ID se mantiene bloqueado porque identifica todos los reportes,
+      firmas y seguimientos históricos del estudiante.
+    </div>
+
+    <div class="grid2" style="margin-top:14px">
+      <div class="field">
+        <label>CURP / ID</label>
+        <input value="${escAttr(a.curp||a.id||'')}" disabled>
+      </div>
+
+      <div class="field">
+        <label>Número de lista</label>
+        <input id="editEstN" type="number" min="1" value="${escAttr(a.n||'')}">
+      </div>
+
+      <div class="field">
+        <label>Nombre completo</label>
+        <input id="editEstNombre" value="${escAttr(a.nombre||'')}">
+      </div>
+
+      <div class="field">
+        <label>Grado</label>
+        <input id="editEstGrado" value="${escAttr(a.grado||'')}">
+      </div>
+
+      <div class="field">
+        <label>Grupo</label>
+        <input id="editEstGrupo" value="${escAttr(a.grupo||'')}">
+      </div>
+
+      <div class="field">
+        <label>Tutor / responsable</label>
+        <input id="editEstTutor" value="${escAttr(a.tutor||'')}">
+      </div>
+
+      <div class="field">
+        <label>Parentesco</label>
+        <input id="editEstParentesco" value="${escAttr(a.parentesco||'')}">
+      </div>
+
+      <div class="field">
+        <label>Teléfono tutor</label>
+        <input id="editEstTelTutor" inputmode="tel" value="${escAttr(a.telefono||'')}">
+      </div>
+
+      <div class="field">
+        <label>Teléfono estudiante</label>
+        <input id="editEstTelAlumno" inputmode="tel" value="${escAttr(a.telefonoEstudiante||'')}">
+      </div>
+    </div>
+
+    <div class="actions" style="margin-top:16px">
+      <button class="btn primary" onclick="guardarDatosEstudianteUI('${js(a.id)}')">Guardar cambios</button>
+      <button class="btn secondary" onclick="verAlumno('${js(a.id)}')">Cancelar</button>
+    </div>`;
+}
+
+function guardarDatosEstudianteUI(id){
+  const payload={
+    n:document.getElementById('editEstN').value,
+    nombre:document.getElementById('editEstNombre').value,
+    grado:document.getElementById('editEstGrado').value,
+    grupo:document.getElementById('editEstGrupo').value,
+    tutor:document.getElementById('editEstTutor').value,
+    parentesco:document.getElementById('editEstParentesco').value,
+    telefonoTutor:document.getElementById('editEstTelTutor').value,
+    telefonoEstudiante:document.getElementById('editEstTelAlumno').value
+  };
+
+  busy(true,'Guardando expediente…');
+
+  google.script.run
+    .withSuccessHandler(()=>{
+      busy(false);
+      toast('Datos del estudiante actualizados.');
+      cargarInicio();
+      setTimeout(()=>verAlumno(id),350);
+    })
+    .withFailureHandler(fail)
+    .guardarDatosEstudiante(authToken,id,payload);
+}
+
+function whatsappEstudianteSeguro(id,nombre){
+  const a=(app.data&&app.data.alumnos||[]).find(x=>String(x.id)===String(id));
+
+  if(a&&a.telefonoEstudianteValido){
+    whatsappEstudiante(id);
+    return;
+  }
+
+  const tel=prompt(
+    'Para enviar el reporte por WhatsApp registra primero el teléfono del estudiante:\\n'+
+    nombre+
+    '\\n\\nCaptura 10 dígitos:',
+    a&&a.telefonoEstudiante?a.telefonoEstudiante:''
+  );
+
+  if(tel===null)return;
+  if(!String(tel).trim()){
+    toast('No se capturó teléfono.');
+    return;
+  }
+
+  busy(true,'Guardando teléfono y preparando WhatsApp…');
+
+  google.script.run
+    .withSuccessHandler(()=>{
+      google.script.run
+        .withSuccessHandler(r=>{
+          busy(false);
+          if(r&&r.url)window.open(r.url,'_blank');
+          toast('WhatsApp preparado con el enlace personal del reporte.');
+          cargarInicio();
+        })
+        .withFailureHandler(fail)
+        .prepararWhatsAppEstudiante(authToken,id,app.parcial);
+    })
+    .withFailureHandler(fail)
+    .guardarTelefonoEstudiante(authToken,id,tel);
+}
+
+function whatsappEstudiante(id){
+  busy(true,'Preparando WhatsApp del estudiante…');
+
+  google.script.run
+    .withSuccessHandler(r=>{
+      busy(false);
+
+      if(r&&r.url){
+        window.open(r.url,'_blank');
+      }
+
+      toast(
+        'WhatsApp preparado con el enlace personal del reporte.'
+      );
+    })
+    .withFailureHandler(fail)
+    .prepararWhatsAppEstudiante(
+      authToken,
+      id,
+      app.parcial
+    );
+}
+
+function registrarTelefonoEstudiante(id,nombre){
+  const tel=prompt(
+    'Teléfono de WhatsApp del estudiante:\\n' +
+    nombre +
+    '\\n\\nCaptura 10 dígitos:',
+    ''
+  );
+
+  if(tel===null)return;
+
+  if(!String(tel).trim()){
+    toast('No se capturó teléfono.');
+    return;
+  }
+
+  busy(true,'Guardando teléfono del estudiante…');
+
+  google.script.run
+    .withSuccessHandler(()=>{
+      busy(false);
+      toast('Teléfono del estudiante guardado.');
+      cargarInicio();
+    })
+    .withFailureHandler(fail)
+    .guardarTelefonoEstudiante(
+      authToken,
+      id,
+      tel
+    );
+}
+
+function solicitarFirma(id){busy(true,'Preparando evidencia de firma…');google.script.run.withSuccessHandler(r=>{busy(false);if(r.url){navigator.clipboard&&navigator.clipboard.writeText(r.url);window.open(r.url,'_blank')}toast(r.estado==='FIRMADO'?'Abriendo evidencia firmada.':'Enlace de firma preparado y copiado.');cargarInicio()}).withFailureHandler(fail).crearSolicitudFirma(authToken,id,app.parcial)}
+function generarSeguimiento(id){busy(true,'Generando seguimiento académico…');google.script.run.withSuccessHandler(r=>{busy(false);toast('Seguimiento generado');window.open(r.url,'_blank')}).withFailureHandler(fail).generarSeguimientoAcademico(authToken,id)}
+
+
+function prepararSelectIntervenciones(){
+  const s=document.getElementById('intAlumno');
+  if(!s||!app.data)return;
+  const actual=s.value;
+  s.innerHTML='<option value="">Selecciona estudiante…</option>'+app.data.alumnos.map(a=>`<option value="${escAttr(a.id)}">${a.n}. ${esc(a.nombre)}</option>`).join('');
+  if(actual)s.value=actual;
+}
+
+function guardarIntervencionUI(){
+  const alumnoId=document.getElementById('intAlumno').value;
+  const payload={
+    alumnoId,
+    parcial:app.parcial,
+    tipo:document.getElementById('intTipo').value,
+    estado:document.getElementById('intEstado').value,
+    fechaSeguimiento:document.getElementById('intFechaSeguimiento').value,
+    motivo:document.getElementById('intMotivo').value,
+    acuerdos:document.getElementById('intAcuerdos').value,
+    compromisos:document.getElementById('intCompromisos').value,
+    canalizacion:document.getElementById('intCanalizacion').value,
+    observaciones:document.getElementById('intObservaciones').value
+  };
+  if(!alumnoId){toast('Selecciona un estudiante');return}
+  busy(true,'Guardando intervención…');
+  google.script.run.withSuccessHandler(()=>{
+    busy(false);
+    toast('Intervención registrada');
+    ['intMotivo','intAcuerdos','intCompromisos','intCanalizacion','intObservaciones'].forEach(id=>document.getElementById(id).value='');
+    cargarIntervencionesUI();
+  }).withFailureHandler(fail).guardarIntervencion(authToken,payload);
+}
+
+function cargarIntervencionesUI(){
+  const sel=document.getElementById('intAlumno');
+  const alumnoId=sel?sel.value:'';
+  google.script.run.withSuccessHandler(arr=>{
+    const tb=document.getElementById('tablaIntervenciones');
+    if(!tb)return;
+    tb.innerHTML=arr.length?arr.map(x=>`<tr>
+      <td>${esc(x.fecha)}</td>
+      <td><b>${esc(x.alumno)}</b></td>
+      <td>${esc(x.tipo)}</td>
+      <td>${esc(x.motivo)}</td>
+      <td>${esc(x.estado)}</td>
+      <td>${esc(x.fechaSeguimiento||'—')}</td>
+      <td><div class="actions">
+        ${x.estado!=='CONCLUIDO'?`<button class="mini" onclick="cambiarEstadoIntervencion('${js(x.id)}','EN SEGUIMIENTO')">Seguimiento</button><button class="mini" onclick="cambiarEstadoIntervencion('${js(x.id)}','CONCLUIDO')">Concluir</button>`:'<span class="badge bOk">Concluido</span>'}
+      </div></td>
+    </tr>`).join(''):'<tr><td colspan="7"><div class="empty">Sin intervenciones registradas.</div></td></tr>';
+  }).withFailureHandler(fail).obtenerIntervenciones(authToken,alumnoId,app.grupoClave);
+}
+
+function cambiarEstadoIntervencion(id,estado){
+  busy(true,'Actualizando intervención…');
+  google.script.run.withSuccessHandler(()=>{busy(false);toast('Estado actualizado');cargarIntervencionesUI()}).withFailureHandler(fail).actualizarEstadoIntervencion(authToken,id,estado);
+}
+
+function cargarControlEnlaces(){
+  google.script.run.withSuccessHandler(arr=>{
+    const tb=document.getElementById('tablaEnlaces');
+    if(!tb)return;
+    tb.innerHTML=arr.map(a=>{
+      const e=a.estudiante;
+      const f=a.firma;
+      const est=e?`${esc(e.estado||'—')} · ${esc(e.vigencia||'—')}`:'Sin enlace';
+      const fir=f?`${esc(f.estado||'—')} · ${esc(f.vigencia||'—')}`:'Sin solicitud';
+      return `<tr>
+        <td>${a.n}</td>
+        <td><b>${esc(a.nombre)}</b></td>
+        <td>${est}</td>
+        <td>${e?esc(e.accesos):'—'}${e&&e.ultimoAcceso?`<div style="font-size:9px;color:#64748B">${esc(e.ultimoAcceso)}</div>`:''}</td>
+        <td>${fir}</td>
+        <td><div class="actions">
+          <button class="mini" onclick="enlaceEstudiante('${js(a.id)}')">Nuevo/abrir estudiante</button>
+          ${e&&e.vigencia!=='REVOCADO'?`<button class="mini" onclick="revocarEnlaceEstudianteUI('${js(a.id)}')">Revocar estudiante</button>`:''}
+          ${f&&f.estado==='PENDIENTE'?`<button class="mini" onclick="revocarFirmaUI('${js(a.id)}')">Revocar firma</button>`:''}
+        </div></td>
+      </tr>`;
+    }).join('');
+  }).withFailureHandler(fail).obtenerControlEnlaces(authToken,app.parcial,app.grupoClave);
+}
+
+function revocarEnlaceEstudianteUI(id){
+  if(!confirm('¿Revocar el enlace actual del estudiante? El historial se conservará.'))return;
+  busy(true,'Revocando enlace…');
+  google.script.run.withSuccessHandler(()=>{busy(false);toast('Enlace del estudiante revocado');cargarControlEnlaces()}).withFailureHandler(fail).revocarEnlaceEstudiante(authToken,id,app.parcial);
+}
+
+function revocarFirmaUI(id){
+  if(!confirm('¿Revocar la solicitud de firma pendiente del tutor?'))return;
+  busy(true,'Revocando solicitud…');
+  google.script.run.withSuccessHandler(()=>{busy(false);toast('Solicitud de firma revocada');cargarControlEnlaces();cargarInicio()}).withFailureHandler(fail).revocarFirmaPendiente(authToken,id,app.parcial);
+}
+
+function cargarConfiguracionUI(){
+  google.script.run.withSuccessHandler(c=>{
+    document.getElementById('cfgInstitucion').value=c.institucion||'';
+    document.getElementById('cfgPlantel').value=c.plantel||'';
+    document.getElementById('cfgTurno').value=c.turno||'';
+    document.getElementById('cfgResponsable').value=c.responsable||'';
+    document.getElementById('cfgCiclo').value=c.ciclo||'';
+    document.getElementById('cfgSemestre').value=c.semestre||'';
+    document.getElementById('cfgGrado').value=c.grado||'';
+    document.getElementById('cfgGrupo').value=c.grupo||'';
+    document.getElementById('cfgGrupoRomano').value=c.grupoRomano||'';
+    document.getElementById('cfgPuntos').value=c.puntosMinimos||18;
+    document.getElementById('cfgReprobatorias').value=c.reprobatoriasExtra||2;
+    document.getElementById('cfgInasistencias').value=c.porcentajeInasistenciaExtra||20;
+  }).withFailureHandler(fail).leerConfiguracionOrientador(authToken);
+}
+
+function guardarConfiguracionUI(){
+  const p={
+    institucion:document.getElementById('cfgInstitucion').value,
+    plantel:document.getElementById('cfgPlantel').value,
+    turno:document.getElementById('cfgTurno').value,
+    responsable:document.getElementById('cfgResponsable').value,
+    ciclo:document.getElementById('cfgCiclo').value,
+    semestre:document.getElementById('cfgSemestre').value,
+    grado:document.getElementById('cfgGrado').value,
+    grupo:document.getElementById('cfgGrupo').value,
+    grupoRomano:document.getElementById('cfgGrupoRomano').value,
+    puntosMinimos:document.getElementById('cfgPuntos').value,
+    reprobatoriasExtra:document.getElementById('cfgReprobatorias').value,
+    porcentajeInasistenciaExtra:document.getElementById('cfgInasistencias').value
+  };
+  busy(true,'Guardando configuración…');
+  google.script.run.withSuccessHandler(()=>{busy(false);toast('Configuración actualizada');cargarInicio()}).withFailureHandler(fail).guardarConfiguracionOrientador(authToken,p);
+}
+
+
+
+function sincronizarEstudiantesUI(){
+  if(!confirm(
+    'Se consultará Datos de Identificación y se actualizará la base de estudiantes. ' +
+    'Los ID existentes y todo el historial académico se conservarán. ¿Continuar?'
+  ))return;
+
+  const host=document.getElementById('syncEstudiantesEstado');
+  if(host)host.innerHTML='<div class="empty">Sincronizando estudiantes…</div>';
+
+  busy(true,'Sincronizando estudiantes desde Datos de Identificación…');
+
+  google.script.run
+    .withSuccessHandler(r=>{
+      busy(false);
+
+      const texto=
+        `Sincronización completa: ${r.nuevos||0} nuevos, `+
+        `${r.actualizados||0} actualizados, `+
+        `${r.desactivados||0} desactivados. `+
+        `Activos en la fuente: ${r.fuenteActivos||0}. `+
+        `Activos en el sistema: ${r.totalActivos||0}.`;
+
+      if(host){
+        host.innerHTML=
+          `<div class="notice" style="background:#F0FDF4;border-color:#BBF7D0;color:#166534">`+
+          `<b>${esc(texto)}</b><br>`+
+          `<span style="font-size:10px">Última sincronización: ${esc(r.fecha||'—')} · `+
+          `Omitidos por identidad incompleta: ${r.omitidos||0}</span></div>`;
+      }
+
+      toast(texto);
+      cargarInicio();
+    })
+    .withFailureHandler(fail)
+    .sincronizarEstudiantesDesdeDatosIdentificacion(authToken);
+}
+
+function auditarVinculosUI(){
+  const host=document.getElementById('auditVinculos');
+  if(host)host.innerHTML='<div class="empty">Verificando base, reportes, firmas y seguimientos…</div>';
+
+  busy(true,'Verificando vínculos…');
+
+  google.script.run
+    .withSuccessHandler(r=>{
+      busy(false);
+
+      const dup=(r.basesMismoNombre||[]);
+      const inc=(r.incidencias||[]);
+
+      let html=`<div class="grid3">
+        <div class="kpi"><div class="label">Reportes correctos</div><div class="num">${r.reportesVerificados||0}</div><div class="hint">Nombre + ID + archivo</div></div>
+        <div class="kpi"><div class="label">Firmas vinculadas</div><div class="num">${r.firmasVinculadas||0}</div><div class="hint">Reporte exacto</div></div>
+        <div class="kpi"><div class="label">Seguimientos correctos</div><div class="num">${r.seguimientosVerificados||0}</div><div class="hint">Nombre + ID + archivo</div></div>
+      </div>`;
+
+      html+=`<div class="notice" style="margin-top:12px">
+        <b>Base activa:</b> ${esc(r.baseActiva&&r.baseActiva.nombre||'—')}<br>
+        <span style="font-size:9px">ID: ${esc(r.baseActiva&&r.baseActiva.id||'—')}</span><br>
+        <b>Hojas con el mismo nombre detectadas:</b> ${dup.length}
+      </div>`;
+
+      if(dup.length>1){
+        html+=`<div class="alert" style="margin-top:10px">
+          <div>${badgeNivel('MEDIO')}</div>
+          <b>Se detectaron bases duplicadas</b>
+          <div>El sistema V2.8 queda fijado a la base marcada como activa para evitar cruces.</div>
+        </div>`;
+      }
+
+      if(!inc.length){
+        html+=`<div class="notice" style="margin-top:10px;background:#F0FDF4;border-color:#BBF7D0;color:#166534"><b>Verificación correcta.</b> No se detectaron cruces de estudiante/reporte.</div>`;
+      }else{
+        html+=`<div style="margin-top:12px"><b>Incidencias detectadas: ${inc.length}</b></div>`;
+        html+=inc.map(x=>`<div class="alert" style="margin-top:8px">
+          <div>${badgeNivel('MEDIO')}</div>
+          <b>${esc(x.tipo)}</b>
+          <div>${esc(x.alumno||x.alumnoId||'')}<br>${esc(x.detalle)}</div>
+        </div>`).join('');
+      }
+
+      if(host)host.innerHTML=html;
+    })
+    .withFailureHandler(fail)
+    .auditarVinculacionSistema(authToken);
+}
+
+function ir(page,btn){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));const el=document.getElementById('page-'+page);if(el)el.classList.add('active');
+  document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));if(btn&&btn.tagName)btn.classList.add('active');else{const b=document.querySelector(`.nav button[data-page="${page}"]`);if(b)b.classList.add('active')}
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(page==='intervenciones'){prepararSelectIntervenciones();cargarIntervencionesUI()}
+  if(page==='enlaces')cargarControlEnlaces();
+  if(page==='administracion')cargarConfiguracionUI();
+}
+function badgeRiesgo(r){return `<span class="badge ${r==='ALTO'?'bHigh':r==='MEDIO'?'bMed':r==='BAJO'?'bLow':'bNone'}">${esc(r)}</span>`}
+function badgeFirma(f){if(f&&f.estado==='FIRMADO')return '<span class="badge bSigned">Firmado</span>';if(f&&f.estado==='DESACTUALIZADA')return '<span class="badge bHigh">Requiere nueva firma</span>';return '<span class="badge bPending">Pendiente</span>'}
+function badgeNivel(n){return `<span class="badge ${n==='ALTO'?'bHigh':n==='MEDIO'?'bMed':'bLow'}">${esc(n)}</span>`}
+function fmtProm(v){return v===null||v===undefined?'<span style="color:#98A2B3">—</span>':`<b>${Number(v).toFixed(1)}</b>`}
+function nombreP(p){return p==='P1'?'Primer Parcial':p==='P2'?'Segundo Parcial':'Tercer Parcial'}
+function busy(on,msg){document.getElementById('busy').style.display=on?'flex':'none';if(msg)document.getElementById('busyText').textContent=msg}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',3200)}
+function fail(e){busy(false);const m=errorText(e);if(/SESIÓN|SESION|VENCIDA/i.test(m)){limpiarSesion();mostrarLogin();loginError('Tu sesión terminó. Inicia sesión nuevamente.')}else toast(m)}
+function errorText(e){return e&&e.message?e.message:String(e||'Error del servidor')}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
+function escAttr(s){return esc(s)}
+function js(s){return String(s??'').replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
+</script>
+</body>
+</html>
