@@ -78,7 +78,7 @@
     <div class="loginField"><label>Contraseña</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Contraseña"></div>
     <div class="loginActions"><button id="btnLogin" class="btn primary" onclick="iniciarSesion()">Ingresar al sistema</button></div>
     <div class="loginHelp">La base de estudiantes se sincroniza con <b>Datos de Identificación EPOANT</b>. Las credenciales se validan únicamente en el backend privado de Apps Script.</div>
-    <div class="loginVersion">CALIFICACIONES EPOANT · V3.1</div>
+    <div class="loginVersion">CALIFICACIONES EPOANT · V3.1.1</div>
   </div>
 </div>
 
@@ -344,7 +344,7 @@
 <div id="modal" class="modal"><div class="modalCard"><div class="modalHead"><b id="modalTitle">Detalle</b><button class="mini" onclick="cerrarModal()">Cerrar</button></div><div id="modalBody" class="modalBody"></div></div></div>
 
 <script src="config.js"></script>
-<script src="bridge-client.js"></script>
+<script src="bridge-client.js?v=3.1.1"></script>
 <script>
 let authToken=sessionStorage.getItem('epoant_calificaciones_auth')||'';
 let app={parcial:'P1',grupoClave:'',data:null,detalle:null,modalidadCaptura:'ALUMNO',capturaAsignatura:null};
