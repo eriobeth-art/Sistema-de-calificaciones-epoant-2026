@@ -54,6 +54,12 @@
     .classTotalBox input{width:120px;border:1px solid #7DD3FC;border-radius:8px;padding:8px;background:white}
     .finalExtra{background:#FCE7E4;color:#A62F23}.finalOrd{background:#E7F0FF;color:#1D4ED8}.finalPend{background:#FFF2D7;color:#94610B}
 
+
+    .analysisSummary{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:12px;margin:14px 0 18px}
+    .analysisBox{background:#F8FBFF;border:1px solid #D7E3F1;border-radius:14px;padding:13px}.analysisBox .aLabel{font-size:9px;font-weight:900;color:#64748B;text-transform:uppercase}.analysisBox .aValue{font-size:22px;font-weight:950;color:#0F4C81;margin-top:5px}
+    .analysisCards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px}.analysisCard{border:1px solid #D7E3F1;border-radius:14px;padding:14px;background:linear-gradient(180deg,#FFFFFF,#F8FBFF)}.analysisCard h4{margin:0 0 8px;color:#0F4C81}.analysisCard p{font-size:10.5px;line-height:1.45;color:#475569;margin:8px 0}.analysisCard .analysisMetrics{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}.analysisCard .analysisMetric{font-size:9px;background:#EEF5FC;border:1px solid #D7E3F1;padding:5px 7px;border-radius:8px}.analysisEmpty{padding:16px;border:1px dashed #CBD5E1;background:#F8FAFC;border-radius:12px;color:#64748B;font-size:11px;text-align:center}
+    .analysisText{max-width:520px;line-height:1.45;color:#475569}.analysisText small{display:block;color:#64748B;margin-top:4px}
+@media(max-width:900px){.analysisCards{grid-template-columns:1fr}.analysisSummary{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:1150px){.kpis{grid-template-columns:repeat(3,1fr)}.grid2{grid-template-columns:1fr}}
     @media(max-width:760px){.sidebar{position:static;width:100%;height:auto}.main{margin-left:0}.nav{grid-template-columns:repeat(2,1fr)}.topbar{position:static;padding:0 14px}.content{padding:14px}.kpis{grid-template-columns:repeat(2,1fr)}.hero{align-items:stretch;flex-direction:column}.alert{grid-template-columns:1fr}.studentMeta{grid-template-columns:1fr}}
   
@@ -78,7 +84,7 @@
     <div class="loginField"><label>Contraseña</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Contraseña"></div>
     <div class="loginActions"><button id="btnLogin" class="btn primary" onclick="iniciarSesion()">Ingresar al sistema</button></div>
     <div class="loginHelp">La base de estudiantes se sincroniza con <b>Datos de Identificación EPOANT</b>. Las credenciales se validan únicamente en el backend privado de Apps Script.</div>
-    <div class="loginVersion">CALIFICACIONES EPOANT · V3.1.1</div>
+    <div class="loginVersion">CALIFICACIONES EPOANT · V3.2.1</div>
   </div>
 </div>
 
@@ -100,6 +106,7 @@
       <button data-page="firmas" onclick="ir('firmas',this)">✎ Firma de Tutor</button>
       <button data-page="alertas" onclick="ir('alertas',this)">⚠ Alertas</button>
       <button data-page="riesgo" onclick="ir('riesgo',this)">! Alumnos en riesgo</button>
+      <button data-page="analisis" onclick="ir('analisis',this)">◈ Análisis académico</button>
       <button data-page="intervenciones" onclick="ir('intervenciones',this)">✚ Intervenciones</button>
       <button data-page="enlaces" onclick="ir('enlaces',this)">⌁ Control de enlaces</button>
       <button data-page="seguimiento" onclick="ir('seguimiento',this)">↗ Seguimiento</button>
@@ -191,6 +198,24 @@
       </section>
 
       
+
+      <section id="page-analisis" class="page">
+        <div class="hero">
+          <div>
+            <h3>Análisis académico por parcial</h3>
+            <p>Interpretación pedagógica automática del rendimiento. Se sincroniza con el Expediente de Orientación Educativa.</p>
+          </div>
+          <div class="actions">
+            <button class="btn primary" onclick="recalcularAnalisisGrupo()">Actualizar análisis del parcial</button>
+          </div>
+        </div>
+        <div id="kpisAnalisis" class="analysisSummary"></div>
+        <div class="panel">
+          <div class="panelHead"><div><h4 id="tituloAnalisis">Análisis del grupo</h4><p style="font-size:10px;color:#64748B;margin:4px 0 0">La interpretación no sustituye valoración psicológica ni diagnóstico clínico.</p></div></div>
+          <div class="tableWrap"><table><thead><tr><th>#</th><th>Alumno</th><th>Promedio</th><th>Aprobadas</th><th>Reprobadas</th><th>Nivel de atención</th><th>Tendencia</th><th>Interpretación</th><th></th></tr></thead><tbody id="tablaAnalisis"><tr><td colspan="9"><div class="empty">Abre esta sección para cargar el análisis del parcial.</div></td></tr></tbody></table></div>
+        </div>
+      </section>
+
       <section id="page-intervenciones" class="page">
         <div class="hero">
           <div>
@@ -344,7 +369,7 @@
 <div id="modal" class="modal"><div class="modalCard"><div class="modalHead"><b id="modalTitle">Detalle</b><button class="mini" onclick="cerrarModal()">Cerrar</button></div><div id="modalBody" class="modalBody"></div></div></div>
 
 <script src="config.js"></script>
-<script src="bridge-client.js?v=3.1.1"></script>
+<script src="bridge-client.js?v=3.2.1"></script>
 <script>
 let authToken=sessionStorage.getItem('epoant_calificaciones_auth')||'';
 let app={parcial:'P1',grupoClave:'',data:null,detalle:null,modalidadCaptura:'ALUMNO',capturaAsignatura:null};
@@ -774,8 +799,8 @@ function verCaptura(id){
   busy(true,'Cargando expediente…');google.script.run.withSuccessHandler(r=>{busy(false);app.detalle=r;renderCaptura(r)}).withFailureHandler(fail).obtenerDetalleAlumno(authToken,id);
 }
 function renderCaptura(r){
-  const p=app.parcial.toLowerCase();const a=r.alumno;
-  document.getElementById('captureHost').innerHTML=`<div class="panelHead"><div><h4>${esc(a.nombre)}</h4><div style="font-size:10px;color:#667085">${esc(a.tutor)} · ${esc(a.telefono)}</div></div><div>${badgeRiesgo(r.resumen[app.parcial].riesgo)}</div></div><div class="tableWrap"><table class="gradeTable"><thead><tr><th>Asignatura</th><th>Faltas</th><th>Calificación</th></tr></thead><tbody>${r.asignaturas.map(m=>`<tr><td><b>${esc(m.nombre)}</b><div style="font-size:9px;color:#667085">${esc(m.campo)}</div></td><td><input class="g-f" data-id="${escAttr(m.id)}" type="number" min="0" step="1" value="${m[p].faltas===''?'':m[p].faltas}"></td><td><input class="g-c" data-id="${escAttr(m.id)}" type="number" min="0" max="10" step=".1" value="${m[p].calificacion===''?'':m[p].calificacion}"></td></tr>`).join('')}</tbody></table></div><div style="padding:16px"><label style="font-size:10px;font-weight:900">Observaciones del parcial</label><textarea id="obsCaptura" class="obs" placeholder="Acuerdos, observaciones, situación académica o intervención realizada…"></textarea><div class="actions" style="margin-top:12px"><button class="btn primary" onclick="guardarCaptura('${js(a.id)}')">Guardar calificaciones</button><button class="btn secondary" onclick="generarReporte('${js(a.id)}')">Generar reporte PDF</button><button class="btn gold" onclick="whatsapp('${js(a.id)}')">Enviar por WhatsApp</button></div></div>`;
+  const p=app.parcial.toLowerCase();const a=r.alumno;const an=analisisParcialDe(r,app.parcial);
+  document.getElementById('captureHost').innerHTML=`<div class="panelHead"><div><h4>${esc(a.nombre)}</h4><div style="font-size:10px;color:#667085">${esc(a.tutor)} · ${esc(a.telefono)}</div></div><div>${badgeRiesgo(r.resumen[app.parcial].riesgo)}</div></div><div class="tableWrap"><table class="gradeTable"><thead><tr><th>Asignatura</th><th>Faltas</th><th>Calificación</th></tr></thead><tbody>${r.asignaturas.map(m=>`<tr><td><b>${esc(m.nombre)}</b><div style="font-size:9px;color:#667085">${esc(m.campo)}</div></td><td><input class="g-f" data-id="${escAttr(m.id)}" type="number" min="0" step="1" value="${m[p].faltas===''?'':m[p].faltas}"></td><td><input class="g-c" data-id="${escAttr(m.id)}" type="number" min="0" max="10" step=".1" value="${m[p].calificacion===''?'':m[p].calificacion}"></td></tr>`).join('')}</tbody></table></div><div style="padding:16px;border-top:1px solid #E2E8F0"><h4 style="margin:0 0 10px;color:#0F4C81">Análisis académico del parcial</h4>${an?renderAnalisisCard(an,app.parcial):'<div class="analysisEmpty">El análisis se generará automáticamente al guardar las calificaciones. También puedes recalcularlo desde la sección Análisis académico.</div>'}</div><div style="padding:16px"><label style="font-size:10px;font-weight:900">Observaciones del parcial</label><textarea id="obsCaptura" class="obs" placeholder="Acuerdos, observaciones, situación académica o intervención realizada…"></textarea><div class="actions" style="margin-top:12px"><button class="btn primary" onclick="guardarCaptura('${js(a.id)}')">Guardar calificaciones</button><button class="btn secondary" onclick="generarReporte('${js(a.id)}')">Generar reporte PDF</button><button class="btn gold" onclick="whatsapp('${js(a.id)}')">Enviar por WhatsApp</button></div></div>`;
 }
 function guardarCaptura(id){
   const faltas={},cals={};document.querySelectorAll('.g-f').forEach(x=>faltas[x.dataset.id]=x.value);document.querySelectorAll('.g-c').forEach(x=>cals[x.dataset.id]=x.value);
@@ -827,6 +852,11 @@ function verAlumno(id){
                 </div>`).join('')}
             </div>
           </div>
+        </div>
+
+        <div class="studentCard" style="margin-top:16px;border:1px solid #D7E3F1;border-radius:14px">
+          <h3>Análisis académico</h3>
+          <div class="analysisCards">${['P1','P2','P3'].map(p=>renderAnalisisCard(analisisParcialDe(r,p),p)).join('')}</div>
         </div>
 
         <div class="actions" style="margin-top:16px">
@@ -1293,10 +1323,48 @@ function auditarVinculosUI(){
     .auditarVinculacionSistema(authToken);
 }
 
+
+function badgeAtencion(n){
+  const s=String(n||'SIN DATOS').toUpperCase();
+  const cls=/INTERVENCIÓN|INTERVENCION/.test(s)?'bHigh':/RIESGO/.test(s)?'bHigh':/SEGUIMIENTO/.test(s)?'bMed':/FAVORABLE/.test(s)?'bLow':'bNone';
+  return `<span class="badge ${cls}">${esc(n||'Sin datos')}</span>`;
+}
+function badgeTendencia(t){
+  const s=String(t||'SIN COMPARATIVO').toUpperCase();
+  const cls=/MEJORA/.test(s)?'bLow':/DESCENSO|DISMINU/.test(s)?'bHigh':/ESTABLE/.test(s)?'bNone':'bNone';
+  return `<span class="badge ${cls}">${esc(t||'Sin comparativo')}</span>`;
+}
+function analisisParcialDe(r,p){return (r&&Array.isArray(r.analisisAcademico)?r.analisisAcademico:[]).find(x=>String(x.parcial)===String(p))||null}
+function renderAnalisisCard(x,p){
+  if(!x)return `<div class="analysisCard"><h4>${nombreP(p)}</h4><div class="analysisEmpty">Aún no existe análisis para este parcial.</div></div>`;
+  return `<div class="analysisCard"><h4>${nombreP(p)}</h4><div>${badgeAtencion(x.nivelAtencion)} ${badgeTendencia(x.tendencia)}</div><div class="analysisMetrics"><span class="analysisMetric">Promedio: ${x.promedio==null?'—':Number(x.promedio).toFixed(1)}</span><span class="analysisMetric">Aprobadas: ${Number(x.aprobadas||0)}</span><span class="analysisMetric">Reprobadas: ${Number(x.reprobadas||0)}</span></div><p><b>Interpretación:</b><br>${esc(x.interpretacion||'Sin información suficiente.')}</p><p><b>Recomendación:</b><br>${esc(x.recomendacion||'Continuar seguimiento ordinario.')}</p></div>`;
+}
+function cargarAnalisisAcademico(){
+  if(!app.data)return;
+  const host=document.getElementById('tablaAnalisis');
+  if(host)host.innerHTML='<tr><td colspan="9"><div class="empty">Cargando análisis académico…</div></td></tr>';
+  google.script.run.withSuccessHandler(r=>{renderAnalisisAcademico(r)}).withFailureHandler(fail).obtenerAnalisisAcademicoGrupo(authToken,app.parcial,app.grupoClave);
+}
+function renderAnalisisAcademico(r){
+  const res=r&&r.resumen?r.resumen:{};
+  const k=document.getElementById('kpisAnalisis');
+  if(k)k.innerHTML=[['Con análisis',res.conAnalisis||0],['Desempeño favorable',res.favorables||0],['Seguimiento preventivo',res.seguimiento||0],['Riesgo / intervención',res.riesgo||0]].map(x=>`<div class="analysisBox"><div class="aLabel">${esc(x[0])}</div><div class="aValue">${x[1]}</div></div>`).join('');
+  const t=document.getElementById('tituloAnalisis');if(t)t.textContent=`${nombreP(app.parcial)} · ${app.data.config.grado}° ${app.data.config.grupoRomano}`;
+  const arr=r&&Array.isArray(r.alumnos)?r.alumnos:[];
+  const body=document.getElementById('tablaAnalisis');
+  if(!body)return;
+  body.innerHTML=arr.length?arr.map(a=>{const x=a.analisis;return `<tr><td>${esc(a.n||'')}</td><td><b>${esc(a.alumno)}</b></td><td>${x?fmtProm(x.promedio):'—'}</td><td>${x?Number(x.aprobadas||0):'—'}</td><td>${x?Number(x.reprobadas||0):'—'}</td><td>${x?badgeAtencion(x.nivelAtencion):badgeAtencion('Sin datos')}</td><td>${x?badgeTendencia(x.tendencia):badgeTendencia('Sin comparativo')}</td><td><div class="analysisText">${x?esc(x.interpretacion||'Sin interpretación.'):'Guarda o recalcula las calificaciones del parcial.'}${x&&x.recomendacion?`<small><b>Recomendación:</b> ${esc(x.recomendacion)}</small>`:''}</div></td><td><button class="mini" onclick="verAlumno('${js(a.alumnoId)}')">Ver expediente</button></td></tr>`}).join(''):'<tr><td colspan="9"><div class="empty">No hay estudiantes en el grupo activo.</div></td></tr>';
+}
+function recalcularAnalisisGrupo(){
+  busy(true,'Recalculando análisis académico y sincronizando con Expediente…');
+  google.script.run.withSuccessHandler(r=>{busy(false);toast(`Análisis actualizado: ${r.actualizados||0} estudiante(s).${r.enviadoExpediente?' Sincronizado con Expediente.':''}`);cargarAnalisisAcademico()}).withFailureHandler(fail).recalcularAnalisisAcademico(authToken,app.parcial,app.grupoClave);
+}
+
 function ir(page,btn){
   document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));const el=document.getElementById('page-'+page);if(el)el.classList.add('active');
   document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));if(btn&&btn.tagName)btn.classList.add('active');else{const b=document.querySelector(`.nav button[data-page="${page}"]`);if(b)b.classList.add('active')}
   window.scrollTo({top:0,behavior:'smooth'});
+  if(page==='analisis')cargarAnalisisAcademico();
   if(page==='intervenciones'){prepararSelectIntervenciones();cargarIntervencionesUI()}
   if(page==='enlaces')cargarControlEnlaces();
   if(page==='administracion')cargarConfiguracionUI();

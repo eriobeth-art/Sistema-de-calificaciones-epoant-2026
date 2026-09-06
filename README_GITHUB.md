@@ -1,17 +1,9 @@
-# GitHub Pages · calificaciones.edupsic.com
+# EPOANT Calificaciones V3.2.1
 
-Sube **el contenido de esta carpeta** a la raíz del repositorio que usarás para el sistema.
+Actualización que hace visible el módulo **Análisis académico** en la interfaz.
 
-Archivos principales:
-- `index.html`: interfaz completa.
-- `config.js`: URL del backend Apps Script y versión.
-- `bridge-client.js`: comunicación segura con Apps Script sin exponer credenciales.
-- `CNAME`: fija `calificaciones.edupsic.com`.
-- `.nojekyll`: sirve los archivos estáticos sin procesamiento de Jekyll.
-- `robots.txt`: evita indexación del sistema.
-
-En GitHub activa **Settings → Pages → Deploy from a branch → main / root**.
-
-Luego, en DNS de `edupsic.com`, crea un CNAME para `calificaciones` apuntando al host de GitHub Pages de tu cuenta (`TU-USUARIO.github.io`).
-
-No cambies `config.js` salvo que cambie la URL `/exec` de Apps Script. Si editas una implementación existente y eliges **Nueva versión**, normalmente la URL se conserva.
+- Nueva sección lateral “Análisis académico”.
+- Recalcula el parcial activo.
+- Muestra interpretación, recomendación, tendencia y nivel de atención.
+- El expediente del alumno muestra P1, P2 y P3.
+- Compatible con calificaciones.edupsic.com.
